@@ -14,12 +14,11 @@ const isPalindrome = (str) =>
  * Question 3
  */
 const stringCombinations = (str) => {
-    const letters = str.split('');
     const combos = [];
 
-    for (let i = 0; i < letters.length; ++i) {
-        for (let j = i + 1; j <= letters.length; ++j) {
-            combos.push(letters.slice(i, j).join(''));
+    for (let i = 0; i < str.length; ++i) {
+        for (let j = i + 1; j <= str.length; ++j) {
+            combos.push(str.slice(i, j));
         }
     }
 
@@ -143,6 +142,7 @@ const amountToCoins = (amount, coins) => {
 
     while (amount > 0 && options.length > 0) {
         const pick = options.pop();
+
         if (pick > amount || pick === undefined) continue;
 
         amount -= pick;
@@ -207,6 +207,23 @@ const getLetterCounts = (str) => {
  * Question 18
  */
 const binarySearch = (arr, item) => {
+    let low = 0;
+    let hi = arr.length;
+
+    while (low < hi) {
+        const mid = Math.floor((low + hi) / 2);
+        const check = arr[mid];
+
+        if (check === item) {
+            return mid;
+        } else if (check < item) {
+            low = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+
+    return null;
 };
 
 /**
@@ -236,6 +253,24 @@ const findSubsets = (numbers, length) => {
     if (length > numbers.length) {
         return [];
     }
+
+    if (length === numbers.length) {
+        return numbers;
+    }
+
+    const subsets = [];
+
+    for (const n of numbers) {
+        const includeN = subsets
+            .filter(s => s.length < length)
+            .map(s => [...s, n]);
+
+        subsets.push([n], ...includeN);
+    }
+
+    return subsets
+        .filter(s => s.length === length)
+        .map(s => s.reverse());
 };
 
 /**
@@ -266,6 +301,25 @@ const findFirstUnique = (str) => {
  * Question 24
  */
 const bubbleSort = (ns) => {
+    let hasSwapped = false;
+
+    for (let i = ns.length - 1; i >= 0; --i) {
+        for (let j = 0; j < i; ++j) {
+            const lookahead = j + 1;
+
+            if (ns[j] >= ns[lookahead]) continue;
+
+            const temp = ns[j];
+            ns[j] = ns[lookahead];
+            ns[lookahead] = temp;
+
+            hasSwapped = true;
+        }
+
+        if (!hasSwapped) return;
+    }
+
+    return ns;
 };
 
 /**
@@ -279,7 +333,6 @@ const findLongestCountryName = (countries) =>
  */
 const longestUniqueSubstring = (str) => {
     const uniques = new Set();
-    const letters = str.split('');
 
     let maxStart = 0;
     let maxEnd = 0;
@@ -287,8 +340,8 @@ const longestUniqueSubstring = (str) => {
     let start = 0;
     let end = 0;
 
-    for (let i = 0; i < letters.length; ++i) {
-        const letter = letters[i];
+    for (let i = 0; i < str.length; ++i) {
+        const letter = str.charAt(i);
 
         if (!uniques.has(letter)) {
             uniques.add(letter);
@@ -302,9 +355,10 @@ const longestUniqueSubstring = (str) => {
         }
 
         uniques.clear();
+        uniques.add(letter);
 
         start = i;
-        end = i;
+        end = i + 1;
     }
 
     return str.substring(maxStart, maxEnd);
@@ -313,19 +367,37 @@ const longestUniqueSubstring = (str) => {
 /**
  * question 27
  */
+const findLongestPalindrome = (str) => {
+    let longest = '';
+
+    for (let i = 0; i < str.length; ++i) {
+        for (let j = i + 1; j <= str.length; ++j) {
+            const substring = str.substring(i, j);
+
+            if (!isPalindrome(substring)) continue;
+            if (substring.length <= longest.length) continue;
+
+            longest = substring;
+        }
+    }
+
+    return longest;
+};
 
 /**
  * Question 28
  */
 const myFilter = (cb) => {
-    let newArr = [];
+    const result = [];
+
     for (let i = 0; i < this.length; i++) {
         const item = this[i];
         if (cb(item, i, this)) {
-            newArr.push(item);
+            result.push(item);
         }
     }
-    return newArr;
+
+    return result;
 }
 
 /**
