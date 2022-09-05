@@ -50,7 +50,7 @@ const longestWord = (str) => str
  * Question 7
  */
 const vowelCount = (str) => {
-    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+    const vowels = new Set([...'aeiou']);
     return str
         .toLowerCase()
         .split('')
@@ -263,14 +263,12 @@ const findSubsets = (numbers, length) => {
     for (const n of numbers) {
         const includeN = subsets
             .filter(s => s.length < length)
-            .map(s => [...s, n]);
+            .map(s => [n, ...s]);
 
         subsets.push([n], ...includeN);
     }
 
-    return subsets
-        .filter(s => s.length === length)
-        .map(s => s.reverse());
+    return subsets.filter(s => s.length === length);
 };
 
 /**
@@ -283,18 +281,20 @@ const findLetterFrequency = (str, letter) =>
  * Question 23
  */
 const findFirstUnique = (str) => {
-    const letters = str.split('');
-    const uniques = new Set();
+    const counts = new Map();
 
-    for (const letter of letters) {
-        if (uniques.has(letter)) {
-            uniques.delete(letter);
-        } else {
-            uniques.add(letter);
+    for (const letter of str.split('')) {
+        const freq = counts.get(letter) ?? 0;
+        counts.set(letter, freq + 1);
+    }
+
+    for (const [letter, freq] of counts.entries()) {
+        if (freq === 1) {
+            return letter;
         }
     }
 
-    return letters.find(l => uniques.has(l));
+    return null;
 };
 
 /**
@@ -326,7 +326,7 @@ const bubbleSort = (ns) => {
  * Question 25
  */
 const findLongestCountryName = (countries) =>
-    countries.reduce((m, w) => m?.length > w.length ? m : w, null);
+    countries.reduce((m, c) => m?.length > c.length ? m : c, null);
 
 /**
  * Question 26
